@@ -24,9 +24,10 @@ export class AuthService {
     if (!checkPassword) throw new UnauthorizedException('Invalid credentials');
 
     const payload = {
-      sub: findUser.id,
+      id: findUser.id,
       username: findUser.username,
       email: findUser.email,
+      roles: findUser.roles,
     };
 
     const token = await this.jwtService.signAsync(payload);
