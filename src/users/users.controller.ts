@@ -23,6 +23,8 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  
+
   @Get(':id')
   @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
