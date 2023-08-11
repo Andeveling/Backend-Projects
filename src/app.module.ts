@@ -1,29 +1,26 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { User } from './users/entities/user.entity';
+
+import { AuthModule } from './auth/auth.module';
+import { DataSourceConfig } from './config/data.source';
+import { ProjectsModule } from './projects/projects.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     UsersModule,
     AuthModule,
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'Santa1094++',
-      database: 'test',
-      entities: [User],
-      synchronize: true,
+    ConfigModule.forRoot({
+      envFilePath: `.env`,
+      isGlobal: true,
     }),
+    TypeOrmModule.forRoot(DataSourceConfig),
+    ProjectsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}

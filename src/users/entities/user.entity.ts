@@ -1,12 +1,11 @@
-import { Role } from 'src/roles/role.enum';
-import { Entity, Column, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { BaseEntity } from '../../config/base-entity';
+import { Role } from '../../roles/role.enum';
+import { Column, Entity, JoinColumn, OneToMany, Unique } from 'typeorm';
+import { UsersProjects } from './user-project.entity';
 
 @Entity({ name: 'users' })
 @Unique(['email'])
-export class User {
-  @PrimaryGeneratedColumn()
-  id!: string;
-
+export class User extends BaseEntity {
   @Column()
   username: string;
 
@@ -16,9 +15,12 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: Role, array: true, default: [Role.User] })
-  roles: Role[];
+  @Column({ type: 'enum', enum: Role, default: Role.User })
+  roles: Role;
 
   @Column({ default: true })
   isActive: boolean;
+
+  @OneToMany(() => UsersProjects, (usersProjects) => usersProjects.user)
+  projectsIncludes: UsersProjects[];
 }

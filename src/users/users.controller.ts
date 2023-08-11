@@ -5,25 +5,23 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
-import { Role } from 'src/roles/role.enum';
 
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { UserToProjectDto } from './dto/user-to-project.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @UseGuards(AuthGuard)
   findAll() {
     return this.usersService.findAll();
   }
-
-  
 
   @Get(':id')
   @UseGuards(AuthGuard)
@@ -36,9 +34,13 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Post('add-to-project')
+  public async userInProject(@Body() body: UserToProjectDto) {
+    return this.usersService.relationToProject(body);
   }
 }
