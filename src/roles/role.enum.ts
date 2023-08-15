@@ -1,10 +1,10 @@
-export enum Role {
+export enum RoleEnum {
   Admin = 'admin',
   Storekeeper = 'storekeeper',
   User = 'user',
 }
 
-export enum AccessLevel {
+export enum AccessLevelEnum {
   Admin = 100,
   Storekeeper = 60,
   User = 40,

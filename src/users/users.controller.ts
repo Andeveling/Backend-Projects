@@ -13,18 +13,23 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { UserToProjectDto } from './dto/user-to-project.dto';
+import { RoleEnum } from 'src/roles/role.enum';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/roles/roles.guard';
 
 @Controller('users')
+@UseGuards(AuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @Roles(RoleEnum.Admin)
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
+  @Roles(RoleEnum.Admin, RoleEnum.User)
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }

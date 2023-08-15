@@ -12,22 +12,28 @@ import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
-import { Public } from './public.decorator';
+import { PublicAccess } from './decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @HttpCode(HttpStatus.OK)
-  @Public()
-  @Post('signin')
+  @PublicAccess()
+  @Post('login')
   signIn(@Body() signInDto: SignInDto) {
     return this.authService.signIn(signInDto);
   }
 
   @HttpCode(HttpStatus.OK)
-  @Public()
-  @Post('signup')
+  @Post('logout')
+  logout(@Request() req: any) {
+    return this.authService.logout(req.user.id);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @PublicAccess()
+  @Post('register')
   signUp(@Body() signUpDto: SignUpDto) {
     return this.authService.signUp(signUpDto);
   }

@@ -1,15 +1,15 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
 import { Project } from 'src/projects/entities/project.entity';
-import { AccessLevel } from 'src/roles/role.enum';
+import { AccessLevelEnum} from 'src/roles/role.enum';
 import { User } from '../entities/user.entity';
 
 export class UserToProjectDto {
   @IsNotEmpty()
-  userId: User['id'];
+  user_id: User['id'];
   @IsNotEmpty()
-  projectId: Project['id'];
+  project_id: Project['id'];
 
   @IsNotEmpty()
-  @IsEnum(AccessLevel)
-  accessLevel: AccessLevel;
+  @IsEnum(AccessLevelEnum)
+  accessLevel: AccessLevelEnum;
 }

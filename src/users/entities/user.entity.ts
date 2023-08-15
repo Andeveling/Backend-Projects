@@ -1,10 +1,10 @@
+import { Column, Entity, OneToMany, Unique } from 'typeorm';
 import { BaseEntity } from '../../config/base-entity';
-import { Role } from '../../roles/role.enum';
-import { Column, Entity, JoinColumn, OneToMany, Unique } from 'typeorm';
+import { RoleEnum } from '../../roles/role.enum';
 import { UsersProjects } from './user-project.entity';
 
 @Entity({ name: 'users' })
-@Unique(['email'])
+@Unique(['email', 'username'])
 export class User extends BaseEntity {
   @Column()
   username: string;
@@ -15,8 +15,8 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: Role, default: Role.User })
-  roles: Role;
+  @Column({ type: 'enum', enum: RoleEnum, default: RoleEnum.User })
+  roles: RoleEnum;
 
   @Column({ default: true })
   isActive: boolean;

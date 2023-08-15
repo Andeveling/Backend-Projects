@@ -1,15 +1,11 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { UsersService } from 'src/users/users.service';
+import { ErrorManager } from 'src/utils/error.manager';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
-import { ErrorManager } from 'src/utils/error.manager';
+import { HASH_SALT } from 'src/constants/env';
 
 @Injectable()
 export class AuthService {
@@ -18,23 +14,12 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(signInDto: SignInDto) {
+  public async signIn(signInDto: SignInDto) {
     try {
-      const findUser = await this.usersService.findOneByEmail(signInDto.email);
-      if (!findUser)
-        throw new ErrorManager({
-          type: 'BAD_REQUEST',
-          message: 'User not found',
-        });
-      const checkPassword = await compare(
+      const findUser = await this.validateUser(
+        signInDto.email,
         signInDto.password,
-        findUser.password,
       );
-      if (!checkPassword)
-        throw new ErrorManager({
-          type: 'UNAUTHORIZED',
-          message: 'Invalid password',
-        });
 
       const payload = {
         id: findUser.id,
@@ -52,11 +37,15 @@ export class AuthService {
 
       return data;
     } catch (error) {
-      throw new ErrorManager.createSignatureError(error.message);
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 
-  async signUp(signUpDto: SignUpDto) {
+  public async logout(userId: string) {
+   return 'logout';
+  }
+
+  public async signUp(signUpDto: SignUpDto) {
     try {
       const findUser = await this.usersService.findOneByEmail(signUpDto.email);
       if (findUser)
@@ -66,7 +55,7 @@ export class AuthService {
         });
 
       const { password } = signUpDto;
-      const plaintToHash = await hash(password, 10);
+      const plaintToHash = await hash(password, HASH_SALT);
 
       const newUser = {
         ...signUpDto,
@@ -75,7 +64,33 @@ export class AuthService {
 
       return this.usersService.create(newUser);
     } catch (error) {
-      throw new ErrorManager.createSignatureError(error.message);
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
+
+  public async validateUser(username: string, password: string) {
+    try {
+      const userByUsername = await this.usersService.findBy({
+        key: 'username',
+        value: username,
+      });
+      const userByEmail = await this.usersService.findBy({
+        key: 'email',
+        value: username,
+      });
+
+      if (userByUsername || userByEmail) {
+        const user = userByUsername || userByEmail;
+        const checkPassword = await compare(password, user.password);
+        if (!checkPassword)
+          throw new ErrorManager({
+            type: 'UNAUTHORIZED',
+            message: 'Invalid password',
+          });
+        return user;
+      }
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
     }
   }
 }

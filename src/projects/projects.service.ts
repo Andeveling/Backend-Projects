@@ -8,7 +8,7 @@ import { ErrorManager } from 'src/utils/error.manager';
 import { UsersProjects } from 'src/users/entities/user-project.entity';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
-import { AccessLevel } from 'src/roles/role.enum';
+import { AccessLevelEnum } from 'src/roles/role.enum';
 
 @Injectable()
 export class ProjectsService {

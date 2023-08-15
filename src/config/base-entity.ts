@@ -1,3 +1,4 @@
+import { Id } from 'src/interfaces/global.interface';
 import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
@@ -6,7 +7,7 @@ import {
 
 export abstract class BaseEntity {
   @PrimaryGeneratedColumn()
-  id!: string;
+  id: Id;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;
